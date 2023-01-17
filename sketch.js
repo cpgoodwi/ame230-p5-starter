@@ -109,7 +109,7 @@ function draw() {
 		{x: 240, y: 480},
 		{x: 190, y: 470},
 		{x: 180, y: 455},
-		{x: 190, y: 435},
+		{x: 178, y: 435},
 	];
 	fill("#D1B271");
 	drawCurve(homerMouthBotVerteces, false); // bottom before top
