@@ -21,7 +21,8 @@ function draw() {
     rectMode(CENTER);
     rect(300, 200, 100, 100);
     
-    fill(255, 0, 0, 128);
+    fill(255, 0, 0, 128); // fourth value is alpha
+    // noStroke();
     ellipse(300, 300, 200, 200);
     
     stroke(0, 128, 0);
