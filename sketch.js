@@ -9,12 +9,12 @@ function setup() {
 function draw() {
 	background(128);
 
-    strokeWeight(1);
-    stroke(100);
-    for (let grid = 0; grid < 600; grid += 50) {
-        line(0, grid, 600, grid);
-        line(grid, 0, grid, 600);
-    }
+    // strokeWeight(1);
+    // stroke(100);
+    // for (let grid = 0; grid < 600; grid += 50) {
+    //     line(0, grid, 600, grid);
+    //     line(grid, 0, grid, 600);
+    // }
 
     cloud.drawSelf();
 
