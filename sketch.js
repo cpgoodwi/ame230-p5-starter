@@ -13,10 +13,10 @@ function setup() {
 
     // defining variables in global scope
     rectangles = [
-        {x: 0.4 * width / 2, y: height / 2, color: "white"},
-        {x: 0.8 * width / 2, y: height / 2, color: "white"},
-        {x: 1.2 * width / 2, y: height / 2, color: "white"},
-        {x: 1.6 * width / 2, y: height / 2, color: "white"},
+        {x: 0.4 * width / 2, color: "white"},
+        {x: 0.8 * width / 2, color: "white"},
+        {x: 1.2 * width / 2, color: "white"},
+        {x: 1.6 * width / 2, color: "white"},
     ];
     rectangleY = height / 2;
 }
@@ -40,21 +40,21 @@ function draw() {
         // if 0 colors, update on hover over first
         case 0:
             if (mouseInRect(rectangles[state].x)) {
-                rectangles[state].color = "red"
+                rectangles[state].color = "red";
                 state++;
             }
             break;
         // if 1 color, update on hover over second
         case 1:
             if (mouseInRect(rectangles[state].x)) {
-                rectangles[state].color = "green"
+                rectangles[state].color = "green";
                 state++;
             }
             break;
         // if 2 colors, update on hover over third
         case 2:
             if (mouseInRect(rectangles[state].x)) {
-                rectangles[state].color = "blue"
+                rectangles[state].color = "blue";
                 state++;
             }
             break;
