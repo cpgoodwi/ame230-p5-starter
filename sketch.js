@@ -57,6 +57,7 @@ function draw() {
         drawTexture(block, height - blockWidth, floorBrickTexture, 14);
     }
 
+    // draw pyramid
     let pyramidLeftEdge = blockWidth * 2;
     let pyramidBottomEdge = height - blockWidth * 2;
     for (let row = 0; row < 8; row++) {
