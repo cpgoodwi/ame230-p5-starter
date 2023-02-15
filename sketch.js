@@ -5,75 +5,86 @@ let ball = {
     y: 300,
     radius: 20,
     velocityX: 3,
-    velocityY: 5,
+    velocityY: -5,
+    hue: 180,
 };
 
-let leftWall, rightWall, topWall, bottomWall;
+let ballBox = {
+    leftWall: 100,
+    topWall: 100,
+};
 
 function setup() {
 	createCanvas(600, 600);
 
-    frameRate(24);
+    frameRate(45);
 
     colorMode(HSB, 360, 100, 100);
 
-    leftWall = 0;
-    rightWall = width;
-    topWall = 0;
-    bottomWall = height;
+    ballBox.rightWall = width - 100;
+    ballBox.bottomWall = height - 100;
 }
 
 function draw() {
     drawBackground();
-    moveBall(5);
+    moveBall(0, 1); // these params mean the ball will bounce normally with no gravity and no loss of momentum
     drawBall();
 
     // noLoop();
 }
 
 function drawBackground() {
+    background(0, 0, 50);
     // use the x and y values of the ball to change the hue of the background
     let newHue = 360 * atan2(ball.y - height/2, ball.x - width/2) / (2 * PI);
     newHue = newHue < 0 ? newHue + 360 : newHue;
-	background(newHue, 100, 100);
+	fill(newHue, 100, 100);
+    rectMode(CORNERS);
+    rect(
+        ballBox.leftWall, ballBox.topWall,
+        ballBox.rightWall, ballBox.bottomWall
+    );
 }
 
-function moveBall() {
+function moveBall(gravity = 1, bounce = 0.8) {
+
+    ball.velocityY += gravity;
+
+
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
 
-    if (ball.x + ball.radius > rightWall) {
+    if (ball.x + ball.radius > ballBox.rightWall) {
         changeColor();
-        ball.velocityX *= -1;
-        ball.x = rightWall - ball.radius;
-    } else if (ball.x - ball.radius < leftWall) {
+        ball.velocityX *= -1 * bounce;
+        ball.x = ballBox.rightWall - ball.radius;
+    } else if (ball.x - ball.radius < ballBox.leftWall) {
         changeColor();
-        ball.velocityX *= -1;
-        ball.x = leftWall + ball.radius;
+        ball.velocityX *= -1 * bounce;
+        ball.x = ballBox.leftWall + ball.radius;
     }
 
-    if (ball.y + ball.radius > bottomWall) {
+    if (ball.y + ball.radius > ballBox.bottomWall) {
+        changeColor();
+        ball.velocityY *= -1 * bounce;
+        ball.y = ballBox.bottomWall - ball.radius;
+    } else if (ball.y - ball.radius < ballBox.topWall) {
         changeColor();
         ball.velocityY *= -1;
-        ball.y = bottomWall - ball.radius;
-    } else if (ball.y - ball.radius < topWall) {
-        changeColor();
-        ball.velocityY *= -1;
-        ball.y = topWall + ball.radius;
+        ball.y = ballBox.topWall + ball.radius;
     }
 }
 
 function changeColor() {
-    let newHue = random(360);
-    print(newHue);
-    fill(
-        newHue,
-        100,
-        100
-    );
+    ball.hue = random(360);
 }
 
 function drawBall() {
+    fill(
+        ball.hue,
+        100,
+        100
+    );
     stroke(0);
     strokeWeight(2);
     ellipse(
