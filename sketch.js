@@ -6,6 +6,8 @@ let rowHeight;
 let colWidth;
 let board = [];
 
+let boardChange = false;
+
 function setup() {
 	createCanvas(600, 600);
 
@@ -15,7 +17,7 @@ function setup() {
     rowHeight = height / numRows;
     colWidth = width / numCols;
 
-    let value = 15;
+    let value = numRows * numCols - 1;
 
     for (let row = 0; row < numRows; row++) {
         let boardRow = [];
@@ -30,12 +32,12 @@ function setup() {
         }
         board.push(boardRow);
     }
-
-    // print(board);
 }
 
 function draw() {
 	background(128);
+
+    // debugBoard();
 
     drawBoard();
 }
@@ -49,77 +51,100 @@ class Tile {
         this.rightX = rightX;
         this.bottomY = bottomY;
     }
-
-    // TODO: change this to a function outside of the Tile class because the tile class shouldn't know about other tiles
-    move() {
-        // let north = undefined, south = undefined, east = undefined, west = undefined;
-        let directions = {
-            "north": null,
-            "south": null,
-            "east": null,
-            "west": null
-        };
-        let cellRow = floor(mouseY / rowHeight);
-        let cellCol = floor(mouseX / colWidth);
-
-        // print("row, col", cellRow, cellCol);
-
-        if (cellRow > 0)
-            directions["north"] = board[cellRow - 1][cellCol];
-
-        if (cellRow < numRows - 1)
-            directions["south"] = board[cellRow + 1][cellCol];
-
-        if (cellCol > 0)
-            directions["west"] = board[cellRow][cellCol - 1];
-
-        if (cellCol < numCols - 1)
-            directions["east"] = board[cellRow][cellCol + 1];
-
-        for (let dir in directions) {
-            if (directions[dir] !== null) {
-                // print(dir ,directions[dir].value);
-                if (directions[dir].value === 0) {
-                    print(dir, directions[dir]);
-                    swapTiles(cellRow, cellCol, dir);
-                    break;
-                }
-            }
-        }
-            
-
-        if (this.color === "red")
-            this.color = "green";
-        else
-            this.color = "red";
-    }
 }
 
 function drawBoard() {
+    textSize(32);
     stroke(0);
     strokeWeight(2);
-    rectMode(CORNERS);
-    for (const row of board) {
-        for (const cell of row) {
-            fill(cell.color);
+    // rectMode(CORNERS);
+    for (let row in board) {
+        for (let col in board[row]) {
+            let tile = board[row][col];
+            let leftX = col * colWidth;
+            let topY = row * rowHeight;
+            fill(tile.color);
             rect(
-                cell.leftX, cell.topY,
-                cell.rightX, cell.bottomY
+                leftX, topY,
+                colWidth, rowHeight
             );
-            
-            textSize(32);
-            text(cell.value,
-                cell.leftX + 16, cell.bottomY - 16
+            text(
+                tile.value,
+                leftX + 16, topY + rowHeight - 16
             );
         }
+    }
+}
+
+function debugBoard() {
+    if (boardChange) {
+        let boardValues = "";
+        for (const row of board) {
+            const values = row.map((tile) => tile.value).join("\t");
+            // print(values);
+            boardValues += values + "\n";
+        }
+        print(boardValues);
+
+        boardChange = false;
     }
 }
 
 function mouseClicked() {
     cellRow = floor(mouseY / rowHeight);
     cellCol = floor(mouseX / colWidth);
-    board[cellRow][cellCol].move();
-    print(board[cellRow][cellCol].value);
+    move(cellRow, cellCol);
+    // print(board[cellRow][cellCol].value);
+}
+
+function move(selectedRow, selectedCol) {
+
+    const directions = {
+        "north": {
+            tile: null,
+            modifier: {row: -1, col: 0}
+        },
+        "east": {
+            tile: null,
+            modifier: {row: 0, col: 1}
+        },
+        "south": {
+            tile: null,
+            modifier: {row: 1, col: 0}
+        },
+        "west": {
+            tile: null,
+            modifier: {row: 0, col: -1}
+        }
+    }
+
+    if (selectedRow > 0)
+        directions["north"].tile = board[selectedRow - 1][selectedCol];
+
+    if (selectedCol < numCols - 1)
+        directions["east"].tile = board[selectedRow][selectedCol + 1];
+
+    if (selectedRow < numRows - 1)
+        directions["south"].tile = board[selectedRow + 1][selectedCol];
+
+    if (selectedCol > 0)
+        directions["west"].tile = board[selectedRow][selectedCol - 1];
+    
+    for (let dir in directions) {
+        if (directions[dir].tile !== null && directions[dir].tile.value === 0) {
+            // swap tiles
+            let tempTile = board[selectedRow][selectedCol];
+            board[selectedRow][selectedCol] = board[selectedRow + directions[dir].modifier.row][selectedCol + directions[dir].modifier.col];
+            board[selectedRow + directions[dir].modifier.row][selectedCol + directions[dir].modifier.col] = tempTile;
+            boardChange = true;
+            break;
+        }
+    }
+
+    // for (const row of board) {
+    //     const values = row.map((tile) => tile.value).join("\t");
+    //     print(values);
+    // }
 }
 
 function swapTiles(selectedRow, selectedCol, direction) {
