@@ -22,7 +22,7 @@ function setup() {
     for (let row = 0; row < numRows; row++) {
         let boardRow = [];
         for (let col = 0; col < numCols; col++) {
-            boardRow.push(new Tile("red", value,
+            boardRow.push(new Tile("cornsilk", value,
                 col*colWidth,
                 row*rowHeight,
                 (col + 1)*colWidth,
