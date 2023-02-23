@@ -7,6 +7,9 @@ const BOUNCE = 0.98;
 let constantBall;
 let randomBall;
 
+let mouseBall;
+let balls = [];
+
 function setup() {
 	createCanvas(600, 600);
 
@@ -20,15 +23,10 @@ function setup() {
         GRAVITY, BOUNCE // uses global constant gravity and bounce values for consistent physics
     );
 
-    randomBall = new Ball(
-        random(0, width/2), // random x value in the left half of canvas
-        random(0, height/2), // random y value in the top half of canvas
-        random(25, 75), // random radius between 25 px and 75 px
-        random(-20, 20), // random horizontal velocity between -20 and 20 (moving left or right)
-        random(-20, 0), // random vertical velocity between -20 and 0 (to toss it up)
-        randomColorRGB(), // random color
-        GRAVITY, BOUNCE // uses global constant gravity and bounce values or consistent physics but could also be random numbers
-    );
+    randomBall = newRandomBall();
+
+    // creating another random ball to follow the mouse
+    mouseBall = newRandomBall();
 
 }
 
@@ -42,6 +40,16 @@ function draw() {
     // render (draw) them after their positions are updated
     constantBall.render();
     randomBall.render();
+
+    for (const ball of balls) {
+        ball.move();
+        ball.render();
+    }
+
+    // follow the cursor with a ball
+    mouseBall.x = mouseX;
+    mouseBall.y = mouseY;
+    mouseBall.render();
 }
 
 // generates a random RGB p5 color object
@@ -53,6 +61,24 @@ function randomColorRGB() {
     );
 }
 
+function newRandomBall() {
+    return new Ball(
+        random(0, width/2), // random x value in the left half of canvas
+        random(0, height/2), // random y value in the top half of canvas
+        random(25, 75), // random radius between 25 px and 75 px
+        random(-20, 20), // random horizontal velocity between -20 and 20 (moving left or right)
+        random(-20, 0), // random vertical velocity between -20 and 0 (to toss it up)
+        randomColorRGB(), // random color
+        GRAVITY, BOUNCE // uses global constant gravity and bounce values or consistent physics but could also be random numbers
+    );
+}
+
+// when mouse clicked, drop a ball on the canvas and create another to follow the mouse
+function mouseClicked() {
+    balls.push(mouseBall);
+    mouseBall = newRandomBall();
+}
+
 class Ball {
     constructor(x, y, radius, velocityX, velocityY, color, gravity, bounce) {
         this.x = x;
@@ -60,9 +86,13 @@ class Ball {
         this.radius = radius; // the radius of the ball object
         this.velocityX = velocityX;
         this.velocityY = velocityY; // x and y velocity represent the amount of pixels per frame the ball will travel in x and y directions
+
         this.color = color; // color of the ball, expects a color string or a p5 color object
+
         this.gravity = gravity; // the the rate of change of the y velocity
         this.bounce = bounce; // the percent of velocity remaining after each bounce; expecting decimal between 0 and 1
+
+        // TODO: convert string to color object if not already to decrease opacity over time
     }
 
     // draws the ball on the screen
