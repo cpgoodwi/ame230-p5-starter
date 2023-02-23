@@ -80,26 +80,29 @@ function mouseClicked() {
 }
 
 class Ball {
-    constructor(x, y, radius, velocityX, velocityY, color, gravity, bounce) {
+    constructor(x, y, radius, velocityX, velocityY, colorProperty, gravity, bounce) {
         this.x = x;
         this.y = y; // x and y coordinates of the ball on the canvas
         this.radius = radius; // the radius of the ball object
         this.velocityX = velocityX;
         this.velocityY = velocityY; // x and y velocity represent the amount of pixels per frame the ball will travel in x and y directions
+        this.maxVelocityY = abs(velocityY);
 
-        this.color = color; // color of the ball, expects a color string or a p5 color object
+        this.colorProperty = typeof colorProperty === "string" ? color(colorProperty) : colorProperty; // color of the ball, expects a color string or a p5 color object
 
         this.gravity = gravity; // the the rate of change of the y velocity
         this.bounce = bounce; // the percent of velocity remaining after each bounce; expecting decimal between 0 and 1
 
-        // TODO: convert string to color object if not already to decrease opacity over time
+        this.alpha = 255;
+        // TODO: make alpha change overtime as the ball stops bouncing
     }
 
     // draws the ball on the screen
     render() {
-        stroke(0); // black outline
+        this.colorProperty.setAlpha(this.alpha);
+        stroke(0, this.alpha); // black outline
         strokeWeight(2); // 2px thick
-        fill(this.color); // fill with the color property of the ball
+        fill(this.colorProperty); // fill with the color property of the ball
         ellipse(
             this.x, this.y, // center of ellipse at x and y coordinate properties
             this.radius*2, this.radius*2 // ellipse width and height are both 2 * radius to make a circle
