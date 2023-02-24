@@ -1,7 +1,7 @@
 // sketch.js
 
 const GRAVITY = 1;
-const BOUNCE = 0.98;
+const BOUNCE = 0.8;
 
 // initalize two balls
 let constantBall;
@@ -41,9 +41,12 @@ function draw() {
     constantBall.render();
     randomBall.render();
 
-    for (const ball of balls) {
-        ball.move();
-        ball.render();
+    for (let ball in balls) {
+        balls[ball].move();
+        balls[ball].render();
+        if (balls[ball] <= 0) {
+            balls.pop(ball);
+        }
     }
 
     // follow the cursor with a ball
@@ -86,7 +89,6 @@ class Ball {
         this.radius = radius; // the radius of the ball object
         this.velocityX = velocityX;
         this.velocityY = velocityY; // x and y velocity represent the amount of pixels per frame the ball will travel in x and y directions
-        this.maxVelocityY = abs(velocityY);
 
         this.colorProperty = typeof colorProperty === "string" ? color(colorProperty) : colorProperty; // color of the ball, expects a color string or a p5 color object
 
@@ -95,6 +97,9 @@ class Ball {
 
         this.alpha = 255;
         // TODO: make alpha change overtime as the ball stops bouncing
+        this.framesAlive = 0;
+        this.positionYHistory = [];
+        this.framesRemembered = 3;
     }
 
     // draws the ball on the screen
@@ -107,6 +112,8 @@ class Ball {
             this.x, this.y, // center of ellipse at x and y coordinate properties
             this.radius*2, this.radius*2 // ellipse width and height are both 2 * radius to make a circle
         );
+
+        this.framesAlive++;
     }
 
     // processes the movement of the ball
@@ -131,5 +138,13 @@ class Ball {
             this.velocityY *= -1 * this.bounce; // invert the velocity to move ball horizontally in the other direction
             this.y = 0 + this.radius; // set ball so its edge is touching the the border to prevent clipping through
         }
+
+        this.positionYHistory[this.framesAlive % this.framesRemembered] = this.y;
+        // print(max(this.positionYHistory));
+        if (max(this.positionYHistory) > height - this.radius - 1) {
+            this.alpha--;
+        }
+
+        // print(this.alpha);
     }
 }
