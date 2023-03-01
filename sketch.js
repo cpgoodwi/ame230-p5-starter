@@ -42,33 +42,50 @@ const blockTexture = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
 ];
 
+let ground,
+    pyramid;
+
 function setup() {
 	createCanvas(600, 600);
     frameRate(15);
-    colorMode(HSL, 255, 255, 5);
+    colorMode(HSL, 360, 100, 5);
+
+    // build ground as array
+    ground = [];
+    for (let block = 0; block < width; block += blockWidth) {
+        ground.push(new EnvironmentSprite(floorBrickTexture, 14, block, height - 2 * blockWidth));
+        ground.push(new EnvironmentSprite(floorBrickTexture, 14, block, height - blockWidth));
+    }
+
+    // build pyramid as array
+    pyramid = [];
+    let pyramidLeftEdge = blockWidth * 2;
+    let pyramidBottomEdge = height - blockWidth * 2;
+    for (let row = 0; row < 8; row++) {
+        for (let col = 8; col > row; col--) {
+            pyramid.push(
+                new EnvironmentSprite(
+                    blockTexture,
+                    14,
+                    pyramidLeftEdge + col * blockWidth,
+                    pyramidBottomEdge - row * blockWidth - blockWidth
+                )
+            );
+        }
+    }
 }
 
 function draw() {
 	background("cornflowerblue"); // paint background sky blue
 
     // draw ground
-    for (let block = 0; block < width; block += blockWidth) {
-        drawTexture(block, height - 2 * blockWidth, floorBrickTexture, 14);
-        drawTexture(block, height - blockWidth, floorBrickTexture, 14);
+    for (const block of ground) {
+        block.render();
     }
 
     // draw pyramid
-    let pyramidLeftEdge = blockWidth * 2;
-    let pyramidBottomEdge = height - blockWidth * 2;
-    for (let row = 0; row < 8; row++) {
-        for (let col = 8; col > row; col--) {
-            drawTexture(
-                pyramidLeftEdge + col * blockWidth, // x
-                pyramidBottomEdge - row * blockWidth - blockWidth, // y
-                blockTexture,
-                14
-            );
-        }
+    for (const block of pyramid) {
+        block.render();
     }
 
     // drawTexture(300, 300, blockTexture, 14);
@@ -81,25 +98,29 @@ function drawPixel(x, y) {
     rect(x, y, pixelSize, pixelSize);
 }
 
-// color params are used to filter the color of the brick similar to how the original mario colored its textures
-function drawTexture(x, y, texture, colorH = 0) {
-    noStroke();
-    for (let row = 0; row < floorBrickTexture.length; row++) {
-        for (let col = 0; col < floorBrickTexture[row].length; col++) {
-            fill(
-                colorH,
-                255,
-                texture[row][col] // TODO: figure out brightness filter or just normalize the data
-            );
-            drawPixel(x + col * pixelSize, y + row * pixelSize);
-        }
-    }
-}
-
 class Brick {
     constructor(color, x, y) {
         this.color = color;
         this.x = x;
         this.y = y;
+    }
+}
+
+class EnvironmentSprite {
+    constructor(texture, hue, x, y) {
+        this.texture = texture;
+        this.hue = hue;
+        this.x = x;
+        this.y = y;
+    }
+
+    render() {
+        noStroke();
+        for (let row = 0; row < this.texture.length; row++) {
+            for (let col = 0; col < this.texture[row].length; col++) {
+                fill (this.hue, 100, this.texture[row][col]);
+                drawPixel(this.x + col * pixelSize, this.y + row * pixelSize);
+            }
+        }
     }
 }
