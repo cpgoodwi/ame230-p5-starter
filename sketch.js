@@ -11,7 +11,7 @@ function preload() {
 
 function setup() {
 	createCanvas(600, 800);
-    targetFrameRate = 30;
+    targetFrameRate = 60;
     frameRate(targetFrameRate);
     rectMode(CENTER);
     noStroke(); // no outlines
