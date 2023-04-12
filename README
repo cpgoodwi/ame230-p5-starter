@@ -1,0 +1,6 @@
+I am aware this does not follow the specification of the assignement exactly.
+
+The action I thought of was "program", so I wanted to make it display the source code as a quine.
+
+Instead of a whole animation playing with the press of a button, I thought each key press should reveal part of the code.
+It will reset when the program is finished.
