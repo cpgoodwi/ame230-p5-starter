@@ -9,4 +9,5 @@ canvas {
 	display: block;
 	margin: auto;
 	border: 10px black solid;
+	cursor: none;
 }
