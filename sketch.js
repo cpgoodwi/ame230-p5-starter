@@ -77,3 +77,31 @@ function drawLineGraph() {
 		let x = map(timeValue, minTimeValue, maxTimeValue, lineGraph.x, lineGraph.x + lineGraph.width);
 	}
 }
+
+function drawCircleGraph() {
+    // fancy circle graph...
+    let maxRadius = 200
+    translate(width / 2, height / 2);
+    // rotate(-HALF_PI);
+
+    noStroke();
+    fill(245);
+    ellipse(0, 0, maxRadius * 2, maxRadius * 2);
+
+    stroke("black");
+    noFill();
+
+    beginShape();
+    for (const i in dataColumn) {
+        const radius = map(dataColumn[i], minDataValue, maxDataValue, 0, maxRadius);
+        const angle = map(timeColumn[i], minTimeValue, maxTimeValue + 1, 0, TWO_PI);
+        const point = {
+            x: radius * sin(TWO_PI * angle / TWO_PI),
+            y: radius * cos(TWO_PI * angle / TWO_PI)
+        };
+        ellipse(point.x, -point.y, 5, 5);
+        // text(i, point.x, -point.y);
+        vertex(point.x, -point.y);
+    }
+    endShape(CLOSE);
+}
